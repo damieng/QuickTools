@@ -11,7 +11,7 @@
     <RootNamespace>QuickReminder</RootNamespace>
     <AssemblyName>QuickReminder</AssemblyName>
     <ApplicationIcon>Resources\Reminder.ico</ApplicationIcon>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>

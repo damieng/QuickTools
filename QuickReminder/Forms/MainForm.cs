@@ -46,6 +46,9 @@ namespace QuickReminder.Forms
 		{
 			var key = Registry.CurrentUser.OpenSubKey(StartupRegistry, true);
 
+		    if (key == null)
+		        return;
+
 			if ((key.GetValue(AppStartName) == null) && (startup))
 				key.SetValue(AppStartName, Application.ExecutablePath, RegistryValueKind.String);
 
@@ -58,14 +61,17 @@ namespace QuickReminder.Forms
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 			var key = Registry.CurrentUser.CreateSubKey(StartupRegistry);
-			launchStartupCheckbox.Checked = (key.GetValue(AppStartName) != null);
-			key.Close();
-			warnPendingCheckBox.Checked = Properties.Settings.Default.WarnPendingAlarmsOnClose;
+		    if (key != null)
+		    {
+		        launchStartupCheckbox.Checked = key.GetValue(AppStartName) != null;
+		        key.Close();
+		    }
+		    warnPendingCheckBox.Checked = Properties.Settings.Default.WarnPendingAlarmsOnClose;
 
-			if (Properties.Settings.Default.FirstRun) {
-				notifyIcon.ShowBalloonTip(5000);
-				Properties.Settings.Default.FirstRun = false;
-			}
+		    if (!Properties.Settings.Default.FirstRun) return;
+
+		    notifyIcon.ShowBalloonTip(5000);
+		    Properties.Settings.Default.FirstRun = false;
 		}
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -82,7 +88,8 @@ namespace QuickReminder.Forms
 
 		private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (PendingRemindersCount == 0 || !warnPendingCheckBox.Checked || MessageBox.Show(string.Format("You have {0} pending reminders. Are you sure you wish to exit?", PendingRemindersCount),
+			if (PendingRemindersCount == 0 || !warnPendingCheckBox.Checked || MessageBox.Show(
+			    $"You have {PendingRemindersCount} pending reminders. Are you sure you wish to exit?",
 				"Exit application", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
 				Application.Exit();
 		}
@@ -107,7 +114,7 @@ namespace QuickReminder.Forms
 
 		private void VersionLabel_Click(object sender, EventArgs e)
 		{
-			System.Diagnostics.Process.Start("http://www.damieng.com");
+			System.Diagnostics.Process.Start("https://www.damieng.com");
 		}
 	}
 }

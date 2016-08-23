@@ -119,7 +119,7 @@ namespace QuickReminder.Forms
 			reminder.ReminderType = atRadio.Checked ? ReminderTypes.Time : ReminderTypes.Interval;
 			reminder.Time = reminder.ReminderType == ReminderTypes.Time ? TimeSpan.Parse(atTimePicker.Text) : new TimeSpan(0, (int)inMinutesNud.Value, 0);
 
-			notifyIcon.Text = string.Format("{0} at {1}", reminder.Name, reminder.NextOccurence);
+			notifyIcon.Text = $"{reminder.Name} at {reminder.NextOccurence}";
 			timer.Enabled = true;
 
 			AlarmState = AlarmStates.Pending;
