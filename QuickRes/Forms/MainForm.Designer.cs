@@ -41,6 +41,7 @@ namespace QuickRes.Forms
             this.launchStartupCheckbox = new System.Windows.Forms.CheckBox();
             this.okButton = new System.Windows.Forms.Button();
             this.versionLabel = new System.Windows.Forms.Label();
+            this.refreshRateCheckbox = new System.Windows.Forms.CheckBox();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,25 +62,25 @@ namespace QuickRes.Forms
             this.contextMenuStrip.Name = "contextMenuStrip1";
             this.contextMenuStrip.ShowCheckMargin = true;
             this.contextMenuStrip.ShowImageMargin = false;
-            this.contextMenuStrip.Size = new System.Drawing.Size(153, 76);
+            this.contextMenuStrip.Size = new System.Drawing.Size(126, 54);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(122, 6);
             // 
             // settingsToolStripMenuItem1
             // 
             this.settingsToolStripMenuItem1.Name = "settingsToolStripMenuItem1";
-            this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.settingsToolStripMenuItem1.Size = new System.Drawing.Size(125, 22);
             this.settingsToolStripMenuItem1.Text = "Settings...";
             this.settingsToolStripMenuItem1.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem1
             // 
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(125, 22);
             this.exitToolStripMenuItem1.Text = "E&xit";
             this.exitToolStripMenuItem1.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -120,7 +121,7 @@ namespace QuickRes.Forms
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(192, 37);
+            this.okButton.Location = new System.Drawing.Point(192, 62);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 3;
@@ -135,19 +136,30 @@ namespace QuickRes.Forms
             this.versionLabel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.versionLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.versionLabel.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.versionLabel.Location = new System.Drawing.Point(9, 42);
+            this.versionLabel.Location = new System.Drawing.Point(9, 67);
             this.versionLabel.Name = "versionLabel";
             this.versionLabel.Size = new System.Drawing.Size(103, 13);
             this.versionLabel.TabIndex = 5;
-            this.versionLabel.Text = "v1.0, Damien Guard";
+            this.versionLabel.Text = "v1.1, Damien Guard";
             this.versionLabel.Click += new System.EventHandler(this.VersionLabel_Click);
+            // 
+            // refreshRateCheckbox
+            // 
+            this.refreshRateCheckbox.AutoSize = true;
+            this.refreshRateCheckbox.Location = new System.Drawing.Point(12, 35);
+            this.refreshRateCheckbox.Name = "refreshRateCheckbox";
+            this.refreshRateCheckbox.Size = new System.Drawing.Size(113, 17);
+            this.refreshRateCheckbox.TabIndex = 6;
+            this.refreshRateCheckbox.Text = "Show &refresh rate";
+            this.refreshRateCheckbox.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(279, 72);
+            this.ClientSize = new System.Drawing.Size(279, 97);
+            this.Controls.Add(this.refreshRateCheckbox);
             this.Controls.Add(this.launchStartupCheckbox);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.versionLabel);
@@ -183,6 +195,7 @@ namespace QuickRes.Forms
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
+        private System.Windows.Forms.CheckBox refreshRateCheckbox;
     }
 }
 

@@ -85,6 +85,7 @@ namespace QuickRes.Forms
 
             launchStartupCheckbox.Checked = key.GetValue(AppStartName) != null;
             key.Close();
+            refreshRateCheckbox.Checked = Properties.Settings.Default.ShowRefreshRate;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -108,10 +109,15 @@ namespace QuickRes.Forms
         {
             WindowState = FormWindowState.Normal;
             Show();
+            Focus();
         }
 
         private void OkButton_Click(object sender, EventArgs e)
         {
+            var shouldUpdateDisplayResolutions = refreshRateCheckbox.Checked != Properties.Settings.Default.ShowRefreshRate;
+            Properties.Settings.Default.ShowRefreshRate = refreshRateCheckbox.Checked;
+            if (shouldUpdateDisplayResolutions) UpdateDisplayResolutions(this, EventArgs.Empty);
+
             Hide();
         }
 
