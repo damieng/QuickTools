@@ -47,10 +47,10 @@ namespace QuickRes.Forms
             // 
             // notifyIcon
             // 
-            this.notifyIcon.BalloonTipTitle = "QuickReminder";
+            this.notifyIcon.BalloonTipTitle = "QuickRes";
             this.notifyIcon.ContextMenuStrip = this.contextMenuStrip;
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
-            this.notifyIcon.Text = "QuickReminder";
+            this.notifyIcon.Text = "QuickRes";
             this.notifyIcon.Visible = true;
             // 
             // contextMenuStrip
