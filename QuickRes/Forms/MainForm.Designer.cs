@@ -41,7 +41,8 @@ namespace QuickRes.Forms
             this.launchStartupCheckbox = new System.Windows.Forms.CheckBox();
             this.okButton = new System.Windows.Forms.Button();
             this.versionLabel = new System.Windows.Forms.Label();
-            this.refreshRateCheckbox = new System.Windows.Forms.CheckBox();
+            this.doubleClickCombo = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,6 +53,7 @@ namespace QuickRes.Forms
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "QuickRes";
             this.notifyIcon.Visible = true;
+            this.notifyIcon.DoubleClick += new System.EventHandler(this.notifyIcon_DoubleClick);
             // 
             // contextMenuStrip
             // 
@@ -121,7 +123,7 @@ namespace QuickRes.Forms
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(192, 62);
+            this.okButton.Location = new System.Drawing.Point(192, 68);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 3;
@@ -136,30 +138,43 @@ namespace QuickRes.Forms
             this.versionLabel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.versionLabel.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.versionLabel.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.versionLabel.Location = new System.Drawing.Point(9, 67);
+            this.versionLabel.Location = new System.Drawing.Point(9, 73);
             this.versionLabel.Name = "versionLabel";
             this.versionLabel.Size = new System.Drawing.Size(103, 13);
             this.versionLabel.TabIndex = 5;
-            this.versionLabel.Text = "v1.1, Damien Guard";
+            this.versionLabel.Text = "v1.2, Damien Guard";
             this.versionLabel.Click += new System.EventHandler(this.VersionLabel_Click);
             // 
-            // refreshRateCheckbox
+            // doubleClickCombo
             // 
-            this.refreshRateCheckbox.AutoSize = true;
-            this.refreshRateCheckbox.Location = new System.Drawing.Point(12, 35);
-            this.refreshRateCheckbox.Name = "refreshRateCheckbox";
-            this.refreshRateCheckbox.Size = new System.Drawing.Size(113, 17);
-            this.refreshRateCheckbox.TabIndex = 6;
-            this.refreshRateCheckbox.Text = "Show &refresh rate";
-            this.refreshRateCheckbox.UseVisualStyleBackColor = true;
+            this.doubleClickCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.doubleClickCombo.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.doubleClickCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.doubleClickCombo.FormattingEnabled = true;
+            this.doubleClickCombo.Location = new System.Drawing.Point(139, 38);
+            this.doubleClickCombo.Name = "doubleClickCombo";
+            this.doubleClickCombo.Size = new System.Drawing.Size(128, 22);
+            this.doubleClickCombo.TabIndex = 7;
+            this.doubleClickCombo.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.doubleClickCombo_DrawItem);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(9, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(124, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Double-click systray icon";
             // 
             // MainForm
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(279, 97);
-            this.Controls.Add(this.refreshRateCheckbox);
+            this.ClientSize = new System.Drawing.Size(279, 103);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.doubleClickCombo);
             this.Controls.Add(this.launchStartupCheckbox);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.versionLabel);
@@ -175,6 +190,7 @@ namespace QuickRes.Forms
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -195,7 +211,8 @@ namespace QuickRes.Forms
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
-        private System.Windows.Forms.CheckBox refreshRateCheckbox;
+        private System.Windows.Forms.ComboBox doubleClickCombo;
+        private System.Windows.Forms.Label label1;
     }
 }
 

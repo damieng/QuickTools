@@ -37,13 +37,13 @@ namespace QuickRes.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ShowRefreshRate {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DoubleClickAction {
             get {
-                return ((bool)(this["ShowRefreshRate"]));
+                return ((string)(this["DoubleClickAction"]));
             }
             set {
-                this["ShowRefreshRate"] = value;
+                this["DoubleClickAction"] = value;
             }
         }
     }

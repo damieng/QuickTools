@@ -2,17 +2,20 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.Drawing;
 
 namespace QuickRes.Forms
 {
     public partial class MainForm : Form
     {
-        private const string StartupRegistry = @"Software\Microsoft\Windows\CurrentVersion\Run";
-        private const string AppStartName = "QuickRes";
-        private readonly Display display = new Display();
+        const string StartupRegistry = @"Software\Microsoft\Windows\CurrentVersion\Run";
+        const string AppStartName = "QuickRes";
+        readonly Display display = new Display();
+        readonly Res initialRes;
 
         public MainForm()
         {
+            initialRes = display.GetCurrentResolution();
             InitializeComponent();
             SetIcons();
         }
@@ -33,10 +36,6 @@ namespace QuickRes.Forms
 
         private void UpdateDisplayResolutions(Object sender, EventArgs eventArgs)
         {
-            var getMenuLabel = Properties.Settings.Default.ShowRefreshRate
-                ? (Func<Tuple<int, int, int>, string>) (r => $"{r.Item1} × {r.Item2} @ {r.Item3}Hz")
-                : r => $"{r.Item1} × {r.Item2}";
-
             while (contextMenuStrip.Items.Count > 0 && !(contextMenuStrip.Items[0] is ToolStripSeparator))
             {
                 var item = contextMenuStrip.Items[0];
@@ -44,11 +43,23 @@ namespace QuickRes.Forms
                 contextMenuStrip.Items.Remove(item);
             }
 
+            doubleClickCombo.Items.Clear();
+            doubleClickCombo.Items.Add("does nothing");
+            doubleClickCombo.Items.Add("set to initial res");
+
+            var currentRes = display.GetCurrentResolution();
+
             foreach (var r in display.GetResolutions())
             {
-                var item = new ToolStripMenuItem(getMenuLabel(r)) { Tag = r };
+                var item = new ToolStripMenuItem(r.ToString()) { Tag = r };
                 item.Click += SetDisplayResolution;
+                if (r.Equals(currentRes))
+                    item.Checked = true;
                 contextMenuStrip.Items.Insert(0, item);
+
+                doubleClickCombo.Items.Add(r);
+                if (r.ToString() == Properties.Settings.Default.DoubleClickAction)
+                    doubleClickCombo.SelectedItem = r;
             }
         }
 
@@ -56,8 +67,7 @@ namespace QuickRes.Forms
         {
             if (sender is ToolStripMenuItem)
             {
-                var r = (Tuple<int, int, int>)((ToolStripMenuItem)sender).Tag;
-                display.SetResolution(r.Item1, r.Item2, r.Item3);
+                display.SetResolution((Res)((ToolStripMenuItem)sender).Tag);
             }
         }
 
@@ -77,15 +87,14 @@ namespace QuickRes.Forms
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            SystemEvents.DisplaySettingsChanged += SystemEventsOnDisplaySettingsChanged;
             UpdateDisplayResolutions(sender, e);
             contextMenuStrip.Click += SetDisplayResolution;
+        }
 
-            var key = Registry.CurrentUser.CreateSubKey(StartupRegistry);
-            if (key == null) return;
-
-            launchStartupCheckbox.Checked = key.GetValue(AppStartName) != null;
-            key.Close();
-            refreshRateCheckbox.Checked = Properties.Settings.Default.ShowRefreshRate;
+        private void SystemEventsOnDisplaySettingsChanged(object sender, EventArgs e)
+        {
+            UpdateDisplayResolutions(sender, e);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -114,10 +123,7 @@ namespace QuickRes.Forms
 
         private void OkButton_Click(object sender, EventArgs e)
         {
-            var shouldUpdateDisplayResolutions = refreshRateCheckbox.Checked != Properties.Settings.Default.ShowRefreshRate;
-            Properties.Settings.Default.ShowRefreshRate = refreshRateCheckbox.Checked;
-            if (shouldUpdateDisplayResolutions) UpdateDisplayResolutions(this, EventArgs.Empty);
-
+            Properties.Settings.Default.DoubleClickAction = doubleClickCombo.Text;
             Hide();
         }
 
@@ -130,11 +136,61 @@ namespace QuickRes.Forms
         {
             var current = Screen.PrimaryScreen;
 
-            foreach (var r in contextMenuStrip.Items.OfType<ToolStripMenuItem>().Where(i => i.Tag is Tuple<int, int, int>))
+            foreach (var r in contextMenuStrip.Items.OfType<ToolStripMenuItem>().Where(i => i.Tag is Res))
             {
-                var tag = (Tuple<int, int, int>)r.Tag;
-                r.Checked = current.Bounds.Width == tag.Item1 && current.Bounds.Height == tag.Item2;
+                var tag = (Res)r.Tag;
+                r.Checked = current.Bounds.Width == tag.Width && current.Bounds.Height == tag.Height;
+
+                if (r.Text == Properties.Settings.Default.DoubleClickAction)
+                {
+                    r.Font = new Font(contextMenuStrip.Font, FontStyle.Bold);
+                }
+                else
+                {
+                    r.Font = contextMenuStrip.Font;
+                }
             }
+        }
+
+        StringFormat comboRightAlignment = new StringFormat() { LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
+
+        private void doubleClickCombo_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            var comboBox = (ComboBox) sender;
+            e.DrawBackground();
+
+            if (e.Index >= 0)
+            {
+                e.Graphics.DrawString(comboBox.Items[e.Index].ToString(), comboBox.Font, 
+                    (e.State & DrawItemState.Selected) == DrawItemState.Selected ? SystemBrushes.HighlightText : new SolidBrush(comboBox.ForeColor),
+                    e.Bounds, comboRightAlignment);
+            }
+        }
+
+        private void notifyIcon_DoubleClick(object sender, EventArgs e)
+        {
+            var action = Properties.Settings.Default.DoubleClickAction;
+            switch (action)
+            {
+                case "":
+                case "does nothing":
+                    return;
+                case "set to initial res":
+                    display.SetResolution(initialRes);
+                    return;
+                default:
+                    display.SetResolution(display.GetResolutions().FirstOrDefault(r => r.ToString() == action));
+                    return;
+            }
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            var key = Registry.CurrentUser.CreateSubKey(StartupRegistry);
+            if (key == null) return;
+
+            launchStartupCheckbox.Checked = key.GetValue(AppStartName) != null;
+            key.Close();
         }
     }
 }

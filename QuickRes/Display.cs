@@ -7,6 +7,52 @@ using Microsoft.Win32;
 
 namespace QuickRes
 {
+    class Res : IEquatable<Res>
+    {
+        readonly int hashCode;
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public int? Frequency { get; private set; }
+
+        public Res(int width, int height, int? frequency)
+        {
+            Width = width;
+            Height = height;
+            Frequency = frequency;
+            hashCode = CreateHashCode();
+        }
+
+        public override String ToString()
+        {
+            return Frequency.HasValue ? $"{Width} × {Height} @ {Frequency}Hz" : $"{Width} × {Height}";
+        }
+
+        public override Boolean Equals(Object obj)
+        {
+            return obj is Res && Equals((Res) obj);
+        }
+
+        public bool Equals(Res other)
+        {
+            return other.Width == Width && other.Height == Height && other.Frequency == Frequency;
+        }
+
+        public override Int32 GetHashCode()
+        {
+            return hashCode;
+        }
+
+        private int CreateHashCode()
+        {
+            int hash = 17;
+            hash = hash*31 + Width.GetHashCode();
+            hash = hash*31 + Height.GetHashCode();
+            hash = hash*31 + (Frequency.HasValue ? Frequency.Value : 0).GetHashCode();
+            return hash;
+        }
+    }
+
     class Display
     {
         [DllImport("user32.dll")]
@@ -88,22 +134,35 @@ namespace QuickRes
             OnResolutionsChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public List<Tuple<int, int, int>> GetResolutions()
+        public Res GetCurrentResolution()
+        {
+            var mode = new DEVMODE();
+            if (EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref mode))
+            {
+                return new Res(mode.dmPelsWidth, mode.dmPelsHeight, mode.dmDisplayFrequency);
+            }
+            else
+            {
+                throw new Exception("Unable to obtain current display mode");
+            }
+        }
+
+        public List<Res> GetResolutions()
         {
             return resolutions
             .GroupBy(g => new { g.dmPelsWidth, g.dmPelsHeight })
-            .Select(r => Tuple.Create(r.Key.dmPelsWidth, r.Key.dmPelsHeight, r.Max(g => g.dmDisplayFrequency)))
-            .OrderBy(o => o.Item1)
+            .Select(r => new Res(r.Key.dmPelsWidth, r.Key.dmPelsHeight, r.Max(g => g.dmDisplayFrequency)))
+            .OrderBy(o => o.Width)
             .ToList();
         }
 
         private List<DEVMODE> resolutions = new List<DEVMODE>();
 
-        public bool SetResolution(int width, int height, int? frequency)
+        public bool SetResolution(Res res)
         {
             var bestMatch = resolutions
                 .OrderByDescending(r => r.dmDisplayFrequency)
-                .FirstOrDefault(r => r.dmPelsWidth == width && r.dmPelsHeight == height && (!frequency.HasValue || frequency.Value == r.dmDisplayFrequency));
+                .FirstOrDefault(r => r.dmPelsWidth == res.Width && r.dmPelsHeight == res.Height && (!res.Frequency.HasValue || res.Frequency.Value == r.dmDisplayFrequency));
 
             return ChangeDisplaySettings(ref bestMatch, CDS_UPDATEREGISTRY) == DISP_CHANGE_SUCCESSFUL;
         }
